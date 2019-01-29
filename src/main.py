@@ -2,6 +2,8 @@
 import cv2
 import os
 import sys
+import numpy as np
+from LineDetection import LineDetection
 
 if __name__ == '__main__':
     '''
@@ -15,6 +17,8 @@ if __name__ == '__main__':
     folderPath = os.path.join(projectPath, 'test_images')
     destPath = os.path.join(projectPath, 'result_images')
     print(destPath)
+
+    lineDetection = LineDetection()
     for root, dirs, files in os.walk(folderPath):
         for file in files:
             if file.endswith(".png"):
@@ -33,14 +37,19 @@ if __name__ == '__main__':
 
                 try:
                     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-                    greenLower = (29, 86, 6)
-                    greenUpper = (64, 255, 255)
+                    #greenLower = (29, 86, 6)
+                    greenLower = (30, 86, 6)
+                    greenUpper = (85, 240, 230)
+                    #greenUpper = (64, 255, 255)
                     mask = cv2.inRange(hsv, greenLower, greenUpper)
                 except cv2.error:
                     print(img)
                     print("Image doesn't exists")
                 newName = 'lineDetected' + file
-                cv2.imwrite(destPath +'/'+ newName, mask)
+                destination = os.path.join(destPath, newName)
+                cv2.imwrite(destination , mask)
+
+                lineDetection.analyse(destination)
 
                 img = cv2.imread(filePath)
                 img = cv2.resize(img, (640, 480))
